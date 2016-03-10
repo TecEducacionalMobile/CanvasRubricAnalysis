@@ -1,0 +1,7 @@
+frontend/node_modules
+frontend/dist
+Handlers/secrets.py
+.tmp
+.sass-cache
+frontend/app/bower_components
+*.pyc
