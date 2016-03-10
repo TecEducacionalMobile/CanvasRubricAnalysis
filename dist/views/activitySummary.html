@@ -1,0 +1,9 @@
+<script></script><style>.highcharts-tooltip{
+    height:auto;
+    width:140px;
+    overflow:auto;
+    white-space:normal !important;
+}
+.chartDiv {
+	height		: 500px;
+}</style><div class="container" cg-busy="{promise:submissionsRequest,message:'Buscando dados dos alunos'}"><div class="row"><div class="col-xs-12 page-header"><h1>{{assignment.name}} <button ng-click="go('/course/'+ current_course)" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> voltar</button></h1></div></div><div class="row"><label>Selecione a Turma:&nbsp;</label><div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">{{activeSection}} <span class="caret"></span></button><ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1"><li ng-repeat="section in sections" role="presentation"><button class="btn btn-link" ng-click="changeSection(section)">{{section.name}}</button></li></ul></div></div><div class="row" ng-repeat="item in assignment.rubric"><div class="panel panel-primary"><div class="panel-heading">{{item.description}}</div><div class="panel-body"><div id="chartDiv{{item.id}}" class="chartDiv col-xs-12"></div></div><div class="panel-footer"><center><!-- <button class="btn btn-success">Ver descrição completa do critério</button> --></center></div></div></div></div>
