@@ -44,7 +44,6 @@ class Assignment(APIHandler):
       headers=headers,
       deadline=60)
     the_page = result.content
-    logging.error(result.content)
 
     self.response.headers['Content-Type'] = 'application/json'
     self.response.out.write(the_page)
@@ -61,7 +60,6 @@ class Sections(APIHandler):
       headers=headers,
       deadline=60)
     the_page = result.content
-    logging.error(result.content)
 
     self.response.headers['Content-Type'] = 'application/json'
     self.response.out.write(the_page)
@@ -90,7 +88,6 @@ class Students(APIHandler):
       the_page2 = json.loads(result.content)
       the_page = the_page+the_page2
 
-    logging.error(len(the_page))
 
     self.response.headers['Content-Type'] = 'application/json'
     self.response.out.write(json.dumps(the_page))
@@ -127,7 +124,6 @@ class CompleteSubmissions(APIHandler):
       for rating in item['ratings']:
         ratings.add(rating['points'])
       TotalCriteria[item['id']] = ratings
-    logging.error(TotalCriteria)
 
 
 
@@ -137,14 +133,14 @@ class CompleteSubmissions(APIHandler):
     for student in filtered:
       if 'rubric_assessment' in student:
         for criterium in student['rubric_assessment']:
-          summary.setdefault(criterium,[]).append(student['rubric_assessment'][criterium]['points'])
-          if criterium not in students:
-            students[criterium] = {}
-          if str(student['rubric_assessment'][criterium]['points']) not in students[criterium]:
-            students[criterium][str(student['rubric_assessment'][criterium]['points'])] = []
-          students[criterium][str(student['rubric_assessment'][criterium]['points'])].append(student["user_id"])
-          logging.error(criterium)
-          TotalCriteria[criterium].discard(student['rubric_assessment'][criterium]['points'])
+          if 'points' in  student['rubric_assessment'][criterium]:     
+            summary.setdefault(criterium,[]).append(student['rubric_assessment'][criterium]['points'])
+            if criterium not in students:
+              students[criterium] = {}
+            if str(student['rubric_assessment'][criterium]['points']) not in students[criterium]:
+              students[criterium][str(student['rubric_assessment'][criterium]['points'])] = []
+            students[criterium][str(student['rubric_assessment'][criterium]['points'])].append(student["user_id"])
+            TotalCriteria[criterium].discard(student['rubric_assessment'][criterium]['points'])
     totalItemCount = {}
     for item in summary:
       totalItemCount[item] = len(summary[item])
@@ -161,57 +157,9 @@ class CompleteSubmissions(APIHandler):
 
 
 
-    logging.error(TotalCriteria)
     self.response.headers['Content-Type'] = 'application/json'
     self.response.out.write(json.dumps(pretty_summary))
 
-class Submissions(APIHandler):
-  def get(self, *args, **kwargs):
-    course_id = kwargs.get('course')
-    assignment = kwargs.get('assignment')
-    if(self.request.get('section')):
-      url = CANVAS['PROD_ENDPOINT']+"sections/"+str(self.request.get('section'))+"/assignments/"+assignment+"/submissions?include[]=rubric_assessment&per_page=200"
-    else:
-      url = CANVAS['PROD_ENDPOINT']+"courses/"+course_id+"/assignments/"+assignment+"/submissions?include[]=rubric_assessment&per_page=200"
-    headers = {'Authorization': CANVAS['AUTH_TOKEN']}
-    data = {}
-    result = urlfetch.fetch(url=url,
-      method=urlfetch.GET,
-      headers=headers,
-      deadline=30)
-    the_page = result.content
-    the_page = json.loads(the_page)
-    summary = {}
-    students = {}
-    pretty_summary = {}
-    filtered = [i for i in the_page]
-    for student in filtered:
-      logging.error(student)
-      if 'rubric_assessment' in student:
-        for criterium in student['rubric_assessment']:
-          summary.setdefault(criterium,[]).append(student['rubric_assessment'][criterium]['points'])
-          if criterium not in students:
-            students[criterium] = {}
-          if str(student['rubric_assessment'][criterium]['points']) not in students[criterium]:
-            students[criterium][str(student['rubric_assessment'][criterium]['points'])] = []
-          students[criterium][str(student['rubric_assessment'][criterium]['points'])].append(student["user_id"])
-
-    for item in summary:
-      summary[item] = Counter(summary[item])
-    for key in summary:
-      array = []
-      for element in summary[key]:
-        array.append({'rating': element, 'count': summary[key][element], 'students': students[key][str(element)]})
-
-      array.sort(key=operator.itemgetter('rating'), reverse=True)
-
-      pretty_summary[key] = array
-    logging.error(pretty_summary)
-
-
-
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.out.write(json.dumps(pretty_summary))
 
 
 
