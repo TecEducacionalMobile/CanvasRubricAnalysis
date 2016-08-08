@@ -36,5 +36,5 @@ app.config(function (cfpLoadingBarProvider, $routeProvider, $locationProvider) {
     // $locationProvider.html5Mode(true);
   });
 app.constant('ENDPOINT',{
-  'URL': 'https://rubricamobilevirtual.appspot.com/api/'
+  'URL': 'http://localhost:11080/api/'
 });

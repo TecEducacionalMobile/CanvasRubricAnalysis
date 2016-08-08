@@ -116,7 +116,7 @@ app.controller('ActivityCtrl',['$scope','$http','$routeParams','$q', '$location'
 	$q.all([$scope.submissionsRequest,assignmentDetails]).then(function(results){
 		console.log($scope.submissions);
 		console.log($scope.assignment);
-		$scope.$apply();
+		// $scope.$apply();
 	
 		// console.log($scope.assignment.rubric[0]);
 		$scope.toolTipHelper = function(index,graph){
